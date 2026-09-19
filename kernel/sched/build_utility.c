@@ -69,14 +69,6 @@
 # include "cpufreq_schedutil.c"
 #endif
 
-#ifdef CONFIG_CPU_FREQ_GOV_REFLEX
-# include "cpufreq_reflex.c"
-#endif
-
-#ifdef CONFIG_CPU_FREQ_GOV_CC
-# include "cc_governor.c"
-#endif
-
 #ifdef CONFIG_SCHED_DEBUG
 # include "debug.c"
 #endif

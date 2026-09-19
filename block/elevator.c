@@ -638,30 +638,11 @@ static struct elevator_type *elevator_get_default(struct request_queue *q)
 	if (q->tag_set->flags & BLK_MQ_F_NO_SCHED_BY_DEFAULT)
 		return NULL;
 
-#ifdef CONFIG_MQ_IOSCHED_DEFAULT_ADIOS
-	/*
-	 * REVIEW FIX: this branch used to return elevator_get(q, "adios",
-	 * false) unconditionally, skipping the exact hardware-topology
-	 * guard the stock/mq-deadline branch below still respects. That
-	 * guard exists to avoid forcing a software scheduler onto a queue
-	 * with genuine multiple hardware queues and no shared tags --
-	 * real hardware-level parallelism that reordering in software
-	 * doesn't help and can hurt. This backport explicitly targets UFS
-	 * MCQ, which is exactly a multiple-hw-queue configuration, so
-	 * skipping this guard could force ADIOS onto a queue where
-	 * upstream's own judgment is "don't." Apply the same check ADIOS
-	 * gets no exemption from it.
-	 */
-	if (q->nr_hw_queues != 1 && !blk_mq_is_shared_tags(q->tag_set->flags))
-		return NULL;
-	return elevator_get(q, "adios", false);
-#else
 	if (q->nr_hw_queues != 1 &&
 	    !blk_mq_is_shared_tags(q->tag_set->flags))
 		return NULL;
 
 	return elevator_get(q, "mq-deadline", false);
-#endif
 }
 
 /*
